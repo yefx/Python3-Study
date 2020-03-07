@@ -1,0 +1,91 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+        #list{
+            width: 1200px;height: 400px;
+            overflow-y: auto;border: 1px solid #9dd521;
+            border-radius: 10px;
+            padding: 10px;box-sizing: border-box;margin:40px auto 0;
+        }
+        .temp{
+            min-height: 120px;
+            border: 1px solid #9dd521;
+            border-radius: 10px;
+            padding: 10px;box-sizing: border-box;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body bgcolor="#E6E6FA">
+    <div style="text-align:center">
+     <font></font><br/><font></font><br/><font></font><br/>
+     <font face="宋体" size="+8" color="FF0000">py-web-exec</font><br/>
+     <font></font><br/>
+     <font></font><br/>
+     <form action ='/cmd' method='post' id="form">
+         <input type="txt"  rows="2" cols="60" placeholder="命令...."
+         name='cmd' id="cmd" style="height:40px;width:500px;">
+   <input type="txt"  rows="2" cols="60" placeholder="参数...."
+         name='option' id="option" style="height:40px;width:500px;">
+         <button type="button" id="submit" class="search-submit"
+         style="height:38px;width:60px;">执行</button>
+     </form>
+     <div id="list">
+
+     </div>
+
+     </div>
+  <script src="/static/js/jquery.js"></script>
+  <script type="text/javascript">
+   $(function(){
+    $('#submit').on('click',function(){
+     var cmd = $('#cmd').val();
+     var option =$('#option').val();
+     console.log(cmd,option);
+     $.ajax({
+      url:'/cmd',
+      type:'post',
+      dataType:'json',
+
+      data:JSON.stringify({
+       cmd:cmd,
+       option:option
+      }),
+      success:function(res){
+       console.log(res);
+         var html = renderResInfoFn(res);
+         $('#list').append(html);
+      },
+      error:function(error){
+       console.log(error)
+      }
+     })
+    })
+    $('#form').submit(function(){
+     return false
+    });
+    //渲染返回信息
+      function renderResInfoFn(res){
+           var html = `<div class="temp">
+                          <p>
+                              <span class="title">命令：</span>
+                              <span>${res.command}</span>
+                          </p>
+                          <p>
+                              <span class="title">返回状态码：</span>
+                              <span>${res.code}</span>
+                          </p>
+                          <p>
+                              <span class="title">返回内容：</span>
+                              <div  style='white-space:pre-line'>${res.msg}</div>
+                           </p>
+                       </div>`
+          return html
+       }
+   })
+  </script>
+</body>
+</html>
